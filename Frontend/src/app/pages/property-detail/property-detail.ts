@@ -8,6 +8,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { BookingService } from '../../core/services/booking.service';
 import { PropertyService } from '../../core/services/property.service';
 import { MessageService } from '../../core/services/message.service';
+import { Review, ReviewCreatePayload } from '../../core/models/review.model';
 
 @Component({
   selector: 'app-property-detail',
@@ -19,6 +20,12 @@ export class PropertyDetail implements OnInit {
   property: PropertyItem | null = null;
   loading = true;
   error = '';
+
+  reviews: Review[] = [];
+  reviewForm: ReviewCreatePayload = { propertyId: 0, rating: 5, comment: '' };
+  reviewLoading = false;
+  reviewError = '';
+  reviewSuccess = '';
 
   today = new Date().toISOString().split('T')[0];
   tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
@@ -58,7 +65,9 @@ export class PropertyDetail implements OnInit {
         this.ngZone.run(() => {
           this.property = p;
           this.form.propertyId = p.id;
+          this.reviewForm.propertyId = p.id;
           this.loading = false;
+          this.fetchReviews(p.id);
           this.cdr.detectChanges();
         });
       },
@@ -167,6 +176,56 @@ export class PropertyDetail implements OnInit {
         this.ngZone.run(() => {
           this.messageLoading = false;
           this.messageError = err?.error?.message || 'Failed to send message.';
+          this.cdr.detectChanges();
+        });
+      }
+    });
+  }
+
+  fetchReviews(id: number) {
+    this.propertyService.getReviews(id).subscribe({
+      next: (revs: Review[]) => {
+        this.ngZone.run(() => {
+          this.reviews = revs;
+          this.cdr.detectChanges();
+        });
+      }
+    });
+  }
+
+  submitReview() {
+    if (!this.property) return;
+    if (!this.reviewForm.comment.trim()) {
+      this.reviewError = 'Comment cannot be empty.';
+      return;
+    }
+
+    this.reviewLoading = true;
+    this.reviewError = '';
+    this.reviewSuccess = '';
+
+    const payload = { ...this.reviewForm, comment: this.reviewForm.comment.trim() };
+
+    this.propertyService.addReview(payload).subscribe({
+      next: (newReview: Review) => {
+        this.ngZone.run(() => {
+          this.reviewLoading = false;
+          this.reviewSuccess = 'Review submitted successfully!';
+          this.reviews.unshift(newReview);
+          this.property!.reviewsCount = (this.property!.reviewsCount || 0) + 1;
+          
+          const totalRating = this.reviews.reduce((sum, r) => sum + r.rating, 0);
+          this.property!.rating = Number((totalRating / this.property!.reviewsCount).toFixed(1));
+
+          this.reviewForm.rating = 5;
+          this.reviewForm.comment = '';
+          this.cdr.detectChanges();
+        });
+      },
+      error: (err) => {
+        this.ngZone.run(() => {
+          this.reviewLoading = false;
+          this.reviewError = err?.error?.message || 'Failed to submit review.';
           this.cdr.detectChanges();
         });
       }

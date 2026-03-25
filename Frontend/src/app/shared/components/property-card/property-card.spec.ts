@@ -13,6 +13,8 @@ describe('PropertyCard', () => {
 
     fixture = TestBed.createComponent(PropertyCard);
     component = fixture.componentInstance;
+    component.property = { id: 1, title: 'Test', imageUrl: '', rating: 4, reviewsCount: 0 } as any;
+    fixture.detectChanges();
     await fixture.whenStable();
   });
 

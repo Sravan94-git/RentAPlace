@@ -21,6 +21,7 @@ public static class MappingExtensions
             HasGarden = property.HasGarden,
             MaxGuests = property.MaxGuests,
             Rating = property.Rating,
+            ReviewsCount = property.ReviewsCount,
             OwnerId = property.OwnerId
         };
     }

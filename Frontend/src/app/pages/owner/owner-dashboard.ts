@@ -20,6 +20,10 @@ export class OwnerDashboard implements OnInit {
   editModalOpen = false;
   editingProperty: PropertyItem | null = null;
 
+  analytics: any = null;
+  analyticsLoading = true;
+  analyticsError = '';
+
   editModel: PropertyCreatePayload = {
     title: '',
     location: '',
@@ -41,6 +45,27 @@ export class OwnerDashboard implements OnInit {
 
   ngOnInit() {
     this.fetch();
+    this.fetchAnalytics();
+  }
+
+  fetchAnalytics() {
+    this.analyticsLoading = true;
+    this.service.getOwnerAnalytics().subscribe({
+      next: (res) => {
+        this.ngZone.run(() => {
+          this.analytics = res;
+          this.analyticsLoading = false;
+          this.cdr.detectChanges();
+        });
+      },
+      error: () => {
+        this.ngZone.run(() => {
+          this.analyticsError = 'Failed to load analytics.';
+          this.analyticsLoading = false;
+          this.cdr.detectChanges();
+        });
+      }
+    });
   }
 
   fetch() {

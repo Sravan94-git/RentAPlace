@@ -11,6 +11,7 @@ export interface PropertyItem {
   hasGarden: boolean;
   maxGuests: number;
   rating: number;
+  reviewsCount?: number;
   ownerId: number;
 }
 

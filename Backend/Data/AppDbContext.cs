@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<Property> Properties => Set<Property>();
     public DbSet<Booking> Bookings => Set<Booking>();
     public DbSet<Message> Messages => Set<Message>();
+    public DbSet<Review> Reviews => Set<Review>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -60,6 +61,18 @@ public class AppDbContext : DbContext
             .HasOne(x => x.Receiver)
             .WithMany(x => x.ReceivedMessages)
             .HasForeignKey(x => x.ReceiverId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Review>()
+            .HasOne(x => x.Property)
+            .WithMany(x => x.Reviews)
+            .HasForeignKey(x => x.PropertyId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Review>()
+            .HasOne(x => x.Reviewer)
+            .WithMany(x => x.GivenReviews)
+            .HasForeignKey(x => x.ReviewerId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

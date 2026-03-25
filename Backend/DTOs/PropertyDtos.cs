@@ -60,5 +60,6 @@ public class PropertyResponseDto
     public bool HasGarden { get; set; }
     public int MaxGuests { get; set; }
     public decimal Rating { get; set; }
+    public int ReviewsCount { get; set; }
     public int OwnerId { get; set; }
 }

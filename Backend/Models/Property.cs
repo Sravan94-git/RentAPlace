@@ -17,6 +17,7 @@ public class Property
     public bool HasGarden { get; set; }
     public int MaxGuests { get; set; } = 2;
     public decimal Rating { get; set; } = 4.5m;
+    public int ReviewsCount { get; set; } = 0;
 
     public string Description { get; set; } = "";
 
@@ -27,4 +28,5 @@ public class Property
     public User? Owner { get; set; }
     public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     public ICollection<Message> Messages { get; set; } = new List<Message>();
+    public ICollection<Review> Reviews { get; set; } = new List<Review>();
 }

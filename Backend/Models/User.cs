@@ -16,4 +16,5 @@ public class User
     public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     public ICollection<Message> SentMessages { get; set; } = new List<Message>();
     public ICollection<Message> ReceivedMessages { get; set; } = new List<Message>();
+    public ICollection<Review> GivenReviews { get; set; } = new List<Review>();
 }

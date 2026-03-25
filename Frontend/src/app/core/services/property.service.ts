@@ -10,6 +10,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class PropertyService {
   private readonly url = 'http://localhost:5255/api/property';
+  private readonly reviewUrl = 'http://localhost:5255/api/review';
 
   constructor(private readonly http: HttpClient) {}
 
@@ -47,6 +48,18 @@ export class PropertyService {
 
   delete(id: number) {
     return this.http.delete(`${this.url}/${id}`);
+  }
+
+  getReviews(propertyId: number) {
+    return this.http.get<any[]>(`${this.reviewUrl}/property/${propertyId}`);
+  }
+
+  addReview(payload: any) {
+    return this.http.post<any>(this.reviewUrl, payload);
+  }
+
+  getOwnerAnalytics() {
+    return this.http.get<any>('http://localhost:5255/api/analytics/owner/dashboard');
   }
 
   uploadImage(file: File) {
